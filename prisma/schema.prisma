@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["extendedWhereUnique"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id   Int    @id @default(autoincrement())
+  code String @unique
+  name String
+
+  Address Address[]
+
+  @@map("clients")
+}
+
+model Address {
+  id         Int     @id @default(autoincrement())
+  code       String
+  index      Int
+  place      String
+  number     String
+  complement String?
+  city       String
+  state      String
+  cep        String
+
+  client Client @relation(fields: [code], references: [code])
+
+  @@index(fields: [code], name: "code_index")
+  @@index(fields: [index], name: "address_index")
+  @@map("addresses")
+}
